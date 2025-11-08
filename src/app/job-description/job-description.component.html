@@ -1,0 +1,37 @@
+<div class="job-description-container">
+  <h2>Job Description</h2>
+  <p class="subtitle">Enter or paste the job description to match resumes against</p>
+  
+  <form (ngSubmit)="onSubmit()" class="job-description-form">
+    <div class="form-group">
+      <textarea
+        [(ngModel)]="jobDescription"
+        name="jobDescription"
+        placeholder="Enter job description here... Include requirements, skills, experience needed, etc."
+        rows="10"
+        class="job-description-textarea"
+        [disabled]="isSubmitting"
+      ></textarea>
+    </div>
+    
+    <div class="form-actions">
+      <button 
+        type="submit" 
+        class="btn btn-primary"
+        [disabled]="isSubmitting || !jobDescription.trim()"
+      >
+        <span *ngIf="!isSubmitting">Save Job Description</span>
+        <span *ngIf="isSubmitting">Saving...</span>
+      </button>
+    </div>
+    
+    <div *ngIf="successMessage" class="alert alert-success">
+      {{ successMessage }}
+    </div>
+    
+    <div *ngIf="errorMessage" class="alert alert-error">
+      {{ errorMessage }}
+    </div>
+  </form>
+</div>
+

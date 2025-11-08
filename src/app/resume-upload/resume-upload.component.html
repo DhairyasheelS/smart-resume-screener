@@ -1,0 +1,53 @@
+<div class="resume-upload-container">
+  <h2>Upload Resumes</h2>
+  <p class="subtitle">Upload PDF resumes to be evaluated against the job description</p>
+  
+  <div
+    class="upload-area"
+    [class.dragging]="isDragging"
+    (dragover)="onDragOver($event)"
+    (dragleave)="onDragLeave($event)"
+    (drop)="onDrop($event)"
+    (click)="triggerFileInput()"
+  >
+    <input
+      type="file"
+      id="file-input"
+      accept=".pdf,application/pdf"
+      multiple
+      (change)="onFileSelected($event)"
+      style="display: none"
+    />
+    
+    <div class="upload-content">
+      <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+        <polyline points="17 8 12 3 7 8"></polyline>
+        <line x1="12" y1="3" x2="12" y2="15"></line>
+      </svg>
+      <h3>Drag & Drop Resumes Here</h3>
+      <p>or click to browse</p>
+      <p class="file-info">PDF files only</p>
+    </div>
+  </div>
+  
+  <div *ngIf="uploadedFiles.length > 0" class="uploaded-files">
+    <h3>Uploaded Files:</h3>
+    <ul>
+      <li *ngFor="let file of uploadedFiles">
+        <span class="file-icon">📄</span>
+        <span>{{ file }}</span>
+        <span *ngIf="uploadProgress[file]" class="uploading-indicator">⏳ Uploading...</span>
+      </li>
+    </ul>
+  </div>
+  
+  <div *ngIf="successMessage" class="alert alert-success">
+    {{ successMessage }}
+  </div>
+  
+  <div *ngIf="errorMessage" class="alert alert-error">
+    {{ errorMessage }}
+  </div>
+</div>
+

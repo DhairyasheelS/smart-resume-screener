@@ -1,59 +1,117 @@
-# SmartResumeScreener
+# Smart Resume Screener - Frontend
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 20.3.1.
+An Angular frontend application for a smart resume screening tool that evaluates resumes and ranks candidates based on job description fit. This frontend connects to a Spring Boot backend for resume analysis and processing.
 
-## Development server
+## Features
 
-To start a local development server, run:
+- 📋 **Job Description Input**: Enter or paste job descriptions with requirements, skills, and experience needed
+- 📄 **Resume Upload**: Drag-and-drop or browse to upload multiple PDF resumes
+- 📊 **Ranked Results**: View candidates ranked by match score with visual indicators
+- 🎨 **Modern UI**: Beautiful, responsive interface designed for recruiters
+- 🔄 **Real-time Updates**: Auto-refreshing results display
 
+## Prerequisites
+
+- Node.js (v18 or higher)
+- npm or yarn
+- Spring Boot backend running (see Backend Configuration)
+
+## Getting Started
+
+### Installation
+
+1. Install dependencies:
 ```bash
-ng serve
+npm install
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+### Configuration
 
-## Code scaffolding
+Update the Spring Boot backend URL in `src/environments/environment.ts`:
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
-
-```bash
-ng generate component component-name
+```typescript
+export const environment = {
+  production: false,
+  apiUrl: 'http://localhost:8080/api' // Your Spring Boot backend URL
+};
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+For production, update `src/environments/environment.prod.ts` with your production backend URL.
+
+### Development
+
+To start the development server:
 
 ```bash
-ng generate --help
+npm start
 ```
 
-## Building
+The application will be available at `http://localhost:4200/`
 
-To build the project run:
+### Production Build
 
 ```bash
-ng build
+npm run build
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+## Backend API Requirements
 
-## Running unit tests
+This frontend expects a Spring Boot backend with the following REST endpoints:
 
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
+### Endpoints
 
-```bash
-ng test
+- `POST /api/job-description`
+  - Request Body: `{ "description": "string" }`
+  - Response: `{ "success": true, "message": "..." }`
+
+- `POST /api/upload-resume`
+  - Request: Multipart form data with `resume` file
+  - Response: `{ "success": true, "resume": { "name": "string", "score": number } }`
+
+- `GET /api/resumes`
+  - Response: `{ "resumes": [{ "name": "string", "score": number }], "jobDescription": "string | null" }`
+
+- `POST /api/clear`
+  - Request Body: `{}`
+  - Response: `{ "success": true, "message": "..." }`
+
+### CORS Configuration
+
+Ensure your Spring Boot backend has CORS enabled to allow requests from the Angular frontend:
+
+```java
+@CrossOrigin(origins = "http://localhost:4200")
 ```
 
-## Running end-to-end tests
+## How It Works
 
-For end-to-end (e2e) testing, run:
+1. **Enter Job Description**: Start by entering or pasting the job description in the first section
+2. **Upload Resumes**: Upload one or more PDF resumes using drag-and-drop or file browser
+3. **View Rankings**: The Spring Boot backend processes resumes and calculates match scores
+4. **Review Results**: Each candidate shows a match percentage, score label (Excellent/Good/Fair/Poor), and visual progress bar
 
-```bash
-ng e2e
+## Technology Stack
+
+- **Frontend Framework**: Angular 20
+- **HTTP Client**: Angular HttpClient
+- **Styling**: Modern CSS with gradients and animations
+- **State Management**: RxJS Observables
+
+## Project Structure
+
+```
+src/
+├── app/
+│   ├── job-description/     # Job description input component
+│   ├── resume-upload/        # Resume upload component with drag-and-drop
+│   ├── results/             # Results display component
+│   └── resume-screener.service.ts  # Service for API calls
+├── environments/
+│   ├── environment.ts        # Development environment config
+│   └── environment.prod.ts  # Production environment config
+└── styles.css               # Global styles
 ```
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+## License
 
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+This project is open source and available for use.

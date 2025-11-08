@@ -1,0 +1,58 @@
+<div class="results-container">
+  <div class="results-header">
+    <h2>Ranked Results</h2>
+    <button class="btn btn-secondary" (click)="refreshResults()" [disabled]="isLoading">
+      <span *ngIf="!isLoading">🔄 Refresh</span>
+      <span *ngIf="isLoading">Loading...</span>
+    </button>
+  </div>
+  
+  <div *ngIf="!jobDescription" class="alert alert-info">
+    ⚠️ Please upload a job description first to see rankings
+  </div>
+  
+  <div *ngIf="isLoading && resumes.length === 0" class="loading">
+    <div class="spinner"></div>
+    <p>Loading results...</p>
+  </div>
+  
+  <div *ngIf="!isLoading && resumes.length === 0 && jobDescription" class="empty-state">
+    <p>No resumes uploaded yet. Upload resumes to see rankings.</p>
+  </div>
+  
+  <div *ngIf="resumes.length > 0" class="results-list">
+    <div 
+      *ngFor="let resume of resumes; let i = index" 
+      class="result-card"
+      [class.top-candidate]="i === 0"
+    >
+      <div class="rank-badge">
+        <span class="rank-number">#{{ i + 1 }}</span>
+        <span *ngIf="i === 0" class="top-badge">⭐ Top Candidate</span>
+      </div>
+      
+      <div class="resume-info">
+        <h3 class="resume-name">{{ resume.name }}</h3>
+        <div class="score-container">
+          <div class="score-circle" [class]="'score-' + getScoreColor(resume.score)">
+            <span class="score-value">{{ resume.score }}%</span>
+          </div>
+          <div class="score-label">{{ getScoreLabel(resume.score) }}</div>
+        </div>
+      </div>
+      
+      <div class="progress-bar-container">
+        <div 
+          class="progress-bar" 
+          [style.width.%]="resume.score"
+          [class]="'progress-' + getScoreColor(resume.score)"
+        ></div>
+      </div>
+    </div>
+  </div>
+  
+  <div *ngIf="errorMessage" class="alert alert-error">
+    {{ errorMessage }}
+  </div>
+</div>
+
