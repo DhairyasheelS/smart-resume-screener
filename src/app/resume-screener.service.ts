@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, forkJoin, of } from 'rxjs';
+import { map, catchError } from 'rxjs/operators';
 import { environment } from '../environments/environment';
 
 export interface Resume {
@@ -22,7 +23,7 @@ export class ResumeScreenerService {
   constructor(private http: HttpClient) {}
 
   uploadJobDescription(description: string): Observable<any> {
-    return this.http.post(`${this.apiUrl}/job-description`, { description });
+    return this.http.post(`${this.apiUrl}/upload-jd`, { description });
   }
 
   uploadResume(file: File): Observable<any> {
@@ -32,11 +33,40 @@ export class ResumeScreenerService {
   }
 
   getResumes(): Observable<ResumesResponse> {
-    return this.http.get<ResumesResponse>(`${this.apiUrl}/resumes`);
+    // Get both candidates and latest job description
+    const candidates$ = this.http.get<any>(`${this.apiUrl}/get-candidates`);
+    const jobDescription$ = this.http.get<any>(`${this.apiUrl}/get-latest-jd`).pipe(
+      catchError(() => {
+        // Return null if no JD exists
+        return of({ status: 'success', data: null });
+      })
+    );
+
+    return forkJoin([candidates$, jobDescription$]).pipe(
+      map(([candidatesResponse, jdResponse]) => {
+        // Transform Flask response to frontend format
+        const resumes: Resume[] = (candidatesResponse.data || []).map((candidate: any) => ({
+          name: candidate.filename,
+          score: candidate.score
+        }));
+
+        const jobDescription = jdResponse.data?.description || null;
+
+        return {
+          resumes,
+          jobDescription
+        };
+      })
+    );
   }
 
   clearData(): Observable<any> {
-    return this.http.post(`${this.apiUrl}/clear`, {});
+    // Flask backend doesn't have a clear endpoint, but we can return a success response
+    // If you need this functionality, you'll need to add it to the backend
+    return new Observable(observer => {
+      observer.next({ status: 'success', message: 'Clear functionality not implemented in backend' });
+      observer.complete();
+    });
   }
 }
 

@@ -1,36 +1,42 @@
 <div class="job-description-container">
-  <h2>Job Description</h2>
-  <p class="subtitle">Enter or paste the job description to match resumes against</p>
-  
-  <form (ngSubmit)="onSubmit()" class="job-description-form">
-    <div class="form-group">
+  <form (ngSubmit)="onSubmit()">
+    <div class="mb-3">
+      <label for="jobDescription" class="form-label fw-bold">
+        <i class="bi bi-file-text me-2"></i>Job Description
+      </label>
+      <p class="text-muted small mb-2">Enter or paste the job description to match resumes against</p>
       <textarea
+        id="jobDescription"
         [(ngModel)]="jobDescription"
         name="jobDescription"
         placeholder="Enter job description here... Include requirements, skills, experience needed, etc."
-        rows="10"
-        class="job-description-textarea"
+        rows="12"
+        class="form-control"
         [disabled]="isSubmitting"
       ></textarea>
     </div>
     
-    <div class="form-actions">
+    <div class="d-grid gap-2">
       <button 
         type="submit" 
-        class="btn btn-primary"
+        class="btn btn-info text-white"
         [disabled]="isSubmitting || !jobDescription.trim()"
       >
+        <i class="bi bi-save me-2"></i>
         <span *ngIf="!isSubmitting">Save Job Description</span>
-        <span *ngIf="isSubmitting">Saving...</span>
+        <span *ngIf="isSubmitting">
+          <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+          Saving...
+        </span>
       </button>
     </div>
     
-    <div *ngIf="successMessage" class="alert alert-success">
-      {{ successMessage }}
+    <div *ngIf="successMessage" class="alert alert-success mt-3 mb-0" role="alert">
+      <i class="bi bi-check-circle me-2"></i>{{ successMessage }}
     </div>
     
-    <div *ngIf="errorMessage" class="alert alert-error">
-      {{ errorMessage }}
+    <div *ngIf="errorMessage" class="alert alert-danger mt-3 mb-0" role="alert">
+      <i class="bi bi-exclamation-circle me-2"></i>{{ errorMessage }}
     </div>
   </form>
 </div>

@@ -1,58 +1,87 @@
 <div class="results-container">
-  <div class="results-header">
-    <h2>Ranked Results</h2>
-    <button class="btn btn-secondary" (click)="refreshResults()" [disabled]="isLoading">
-      <span *ngIf="!isLoading">🔄 Refresh</span>
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h5 class="fw-bold mb-0">
+      <i class="bi bi-graph-up me-2"></i>Ranked Results
+    </h5>
+    <button class="btn btn-warning btn-sm" (click)="refreshResults()" [disabled]="isLoading">
+      <i class="bi bi-arrow-clockwise me-1" [class.spin]="isLoading"></i>
+      <span *ngIf="!isLoading">Refresh</span>
       <span *ngIf="isLoading">Loading...</span>
     </button>
   </div>
   
-  <div *ngIf="!jobDescription" class="alert alert-info">
-    ⚠️ Please upload a job description first to see rankings
+  <div *ngIf="!jobDescription" class="alert alert-info mb-3" role="alert">
+    <i class="bi bi-info-circle me-2"></i>Please upload a job description first to see rankings
   </div>
   
-  <div *ngIf="isLoading && resumes.length === 0" class="loading">
-    <div class="spinner"></div>
-    <p>Loading results...</p>
+  <div *ngIf="isLoading && resumes.length === 0" class="text-center py-5">
+    <div class="spinner-border text-primary mb-3" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+    <p class="text-muted">Loading results...</p>
   </div>
   
-  <div *ngIf="!isLoading && resumes.length === 0 && jobDescription" class="empty-state">
-    <p>No resumes uploaded yet. Upload resumes to see rankings.</p>
+  <div *ngIf="!isLoading && resumes.length === 0 && jobDescription" class="alert alert-secondary text-center" role="alert">
+    <i class="bi bi-inbox me-2"></i>No resumes uploaded yet. Upload resumes to see rankings.
   </div>
   
   <div *ngIf="resumes.length > 0" class="results-list">
     <div 
       *ngFor="let resume of resumes; let i = index" 
-      class="result-card"
-      [class.top-candidate]="i === 0"
+      class="card mb-3 shadow-sm"
+      [class.border-warning]="i === 0"
+      [class.border-2]="i === 0"
     >
-      <div class="rank-badge">
-        <span class="rank-number">#{{ i + 1 }}</span>
-        <span *ngIf="i === 0" class="top-badge">⭐ Top Candidate</span>
-      </div>
-      
-      <div class="resume-info">
-        <h3 class="resume-name">{{ resume.name }}</h3>
-        <div class="score-container">
-          <div class="score-circle" [class]="'score-' + getScoreColor(resume.score)">
-            <span class="score-value">{{ resume.score }}%</span>
+      <div class="card-body">
+        <div class="row align-items-center">
+          <div class="col-md-1 text-center">
+            <span class="badge bg-primary fs-6">#{{ i + 1 }}</span>
+            <span *ngIf="i === 0" class="badge bg-warning text-dark mt-1 d-block">
+              <i class="bi bi-star-fill me-1"></i>Top Candidate
+            </span>
           </div>
-          <div class="score-label">{{ getScoreLabel(resume.score) }}</div>
+          <div class="col-md-5">
+            <h6 class="card-title mb-1">
+              <i class="bi bi-file-person me-2"></i>{{ resume.name }}
+            </h6>
+          </div>
+          <div class="col-md-3 text-center">
+            <div class="mb-2">
+              <span class="badge fs-6" 
+                    [class.bg-success]="resume.score >= 80"
+                    [class.bg-info]="resume.score >= 60 && resume.score < 80"
+                    [class.bg-warning]="resume.score >= 40 && resume.score < 60"
+                    [class.bg-danger]="resume.score < 40">
+                {{ resume.score }}%
+              </span>
+            </div>
+            <small class="text-muted">{{ getScoreLabel(resume.score) }}</small>
+          </div>
+          <div class="col-md-3">
+            <div class="progress" style="height: 25px;">
+              <div 
+                class="progress-bar progress-bar-striped progress-bar-animated"
+                [class.bg-success]="resume.score >= 80"
+                [class.bg-info]="resume.score >= 60 && resume.score < 80"
+                [class.bg-warning]="resume.score >= 40 && resume.score < 60"
+                [class.bg-danger]="resume.score < 40"
+                role="progressbar"
+                [style.width.%]="resume.score"
+                [attr.aria-valuenow]="resume.score"
+                aria-valuemin="0"
+                aria-valuemax="100"
+              >
+                {{ resume.score }}%
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
-      
-      <div class="progress-bar-container">
-        <div 
-          class="progress-bar" 
-          [style.width.%]="resume.score"
-          [class]="'progress-' + getScoreColor(resume.score)"
-        ></div>
       </div>
     </div>
   </div>
   
-  <div *ngIf="errorMessage" class="alert alert-error">
-    {{ errorMessage }}
+  <div *ngIf="errorMessage" class="alert alert-danger" role="alert">
+    <i class="bi bi-exclamation-triangle me-2"></i>{{ errorMessage }}
   </div>
 </div>
 
